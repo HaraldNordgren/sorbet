@@ -62,6 +62,20 @@ instead of this, which will **not** work in LSP mode:
 
 Using `--ignore` flags like this is imperfect and will not always work, but it's the best current workaround. For more, see [Including and excluding files](cli.md#including-and-excluding-files).
 
+When the extra folder is outside the project root, for example a `scripts/` folder next to it, ignoring everything else from a common parent folder can be impractical. Another option is to keep only the main folder in `sorbet/config`:
+
+```bash
+--dir=.
+```
+
+and pass the extra folder on the command line only where Sorbet runs without `--lsp`, for example in CI:
+
+```bash
+srb tc --dir=../scripts
+```
+
+Sorbet combines the `--dir` flags from `sorbet/config` with the ones on the command line, so this type checks both folders. The language server only sees the main folder, so files in the extra folder are not type checked in the editor, and any references from the main folder to constants defined in the extra folder will be reported as errors. This works best when the extra folder depends on the main folder, but not the other way around.
+
 ## Using Sorbet as a language server
 
 With the [Prerequisites](#prerequisites) out of the way, simply add the `--lsp` flag to however you invoke Sorbet right now. Some examples:
